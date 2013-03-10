@@ -3,6 +3,44 @@
 
 ##Libraries should be statically linked to the executables called and included with script
 
+##functions
+function scrape {
+        ##get start date and time
+        date
+        ## Network State
+        netstat -an
+        ##Running Processes
+        ps -aux
+        ##Open ports and files
+        lsof -p
+        ##Routing and ARP Tables
+        netstat -rn
+        route -Cn
+        arp -an
+        ##interface information
+        ifconfig
+        ##process load informations
+        top -n 1
+        ##currently logged on users
+        w
+        ## logon history
+        last
+        #####
+        ##logs-tar and send, need to seperate
+        ####
+        ##user group information
+        cat /etc/passwd
+        ##users who have logged on
+        ls /home
+        ##GET .bash_history files
+        ##OS Information
+        uname -a
+        ##Loaded Kernel Modules
+        lsmod
+        ##End date and time
+        date
+           }
+
 ##Check for root permissions.
 if [[ $UID -ne 0 ]]; then
         echo "lift must be run as root"
@@ -74,57 +112,4 @@ fi
 
 #echo $output
 
-##get start date and time
-date
-
-## Network State
-netstat -an
-
-##Running Processes
-ps -aux
-
-##Open ports and files
-lsof -p
-
-##Routing and ARP Tables
-netstat -rn
-route -Cn
-arp -an
-
-##interface information
-ifconfig
-
-##process load informations
-top -n 1
-
-##currently logged on users
-w
-
-## logon history
-last
-
-
-#####
-##logs
-
-
-
-#####
-
-##user group information
-cat /etc/passwd
-
-##users who have logged on
-ls /home
-##GET .bash_history files
-
-##OS Information
-uname -a
-date
-
-##Loaded Kernel Modules
-lsmod
-
-
-##End date and time
-date
+scrape
