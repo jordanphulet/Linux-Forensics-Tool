@@ -88,7 +88,7 @@ while getopts "vncw:h:p:" opt; do
         ;;
         ##output to command line
         C)
-        cli=true;
+        cli=true
         ;;
         \?)
         echo "Invalid option: -$OPTARG" >&2
@@ -98,10 +98,31 @@ while getopts "vncw:h:p:" opt; do
 done
 echo "$port $host"
 
-if ! $netcat
-        then
-        output=" | nc -q 1 $port $host"
+#if ! $netcat
+#        then
+#        output=" | nc -q 1 $port $host"
+#fi
+
+
+if (($netcat) && (! $cli) && (! $file))
+then
+	echo 1
+	scrape | nc -q 1 $port $host
+elif ((! $netcat) && ($cli) && (! $file))
+then
+	echo 2
+	scrape
+elif ((! $netcat) && (! $cli) && ($file))
+then
+	echo 3
+	scrape >> $filename
+else
+	echo 4
 fi
+
+
+
+
 
 #exit 1
 
@@ -112,4 +133,4 @@ fi
 
 #echo $output
 
-scrape
+#scrape
