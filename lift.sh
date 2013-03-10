@@ -75,14 +75,11 @@ fi
 #echo $output
 
 ##get start date and time
-junk=date
+date
 
 ## Network State
-junk=$junk netstat -an
+netstat -an
 
-echo $junk
-
-exit 1
 ##Running Processes
 ps -aux
 
