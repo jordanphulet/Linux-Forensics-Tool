@@ -1,6 +1,6 @@
 #!/bin/bash
 ##The goal of this script of to automate the gathering and exportation of data, as well as provide the ability to run the tools individually
-
+##TEST
 ##Libraries should be statically linked to the executables called and included with script
 
 ##functions
