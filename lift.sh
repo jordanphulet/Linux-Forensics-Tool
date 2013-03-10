@@ -5,12 +5,12 @@
 #GLOBAL VARIABLES
 script="${0}"
 vers="0.0.1a"
-port="0"
-host="nope"
-netcat=false
+cli=false
 file=false
 filename=""
-cli=false
+netcat=false
+host="nope"
+port="0"
 
 function main()
 {
@@ -25,29 +25,28 @@ function main()
 
 	print_globals
 
-	if (($cli))
+	if ((${cli}) || [ $# -eq 0 ] )
 	then
 		echo 1
 		scrape
 	fi
 
-	if ((${file}))
+	if ${file}
 	then
 		echo 2
 		scrape >> "${filename}"
 	fi		
 
-	if ((${netcat}))
+	if ${netcat}
 	then
 		echo 3
 		scrape | nc -q 1 ${host} ${port}
 	fi
-
 }
 
 function parse_arguments()
 {
-	while getopts "hvcn:o:" opt
+	while getopts "hvco:n:" opt
 	do
 		case ${opt} in
 			##help
@@ -60,39 +59,24 @@ function parse_arguments()
 				echo "Version ${vers}"
 				exit 1
 			;;
+			##output to command line
+			c)
+				kill_on_multiple_outputs
+				cli=true
+			;;
+			##Write to file
+			o)
+				kill_on_multiple_outputs
+				file=true
+				filename=${OPTARG}
+			;;
 			##use netcat
 			n)
-				if ((${netcat}) || (${cli}) || (${file}))
-				then
-					echo "You have chosen multiple output options."
-					print_usage
-					exit 1
-				fi
+				kill_on_multiple_outputs
 				netcat=true
 				IFS=':' read -ra PARTS <<< "${OPTARG}"
 				host=${PARTS[0]}
 				port=${PARTS[1]}
-			;;
-			##Write to file
-			o)
-				if ((${netcat}) || (${cli}) || (${file}))
-				then
-					echo "You have chosen multiple output options."
-					print_usage
-					exit 1
-				fi
-				file=true
-				filename=${OPTARG}
-			;;
-			##output to command line
-			c)
-				if ((${netcat}) || (${file}))
-				then
-					echo "You have chosen multiple output options."
-					print_usage
-					exit 1
-				fi
-				cli=true
 			;;
 			\?)
 				print_usage
@@ -104,16 +88,28 @@ function parse_arguments()
 	done
 }
 
+function kill_on_multiple_outputs()
+{
+	if ((${netcat}) || (${cli}) || (${file}))
+	then
+		echo
+		echo "You have selected multiple output options."
+		echo
+		print_usage
+		exit 1
+	fi
+}
+
 function print_globals()
 {
 	echo script    ${script}
 	echo vers      ${vers}
 	echo cli       ${cli}
+	echo file      ${file}
+	echo filename  ${filename}
 	echo netcat    ${netcat}
 	echo port      ${port}
 	echo host      ${host}
-	echo file      ${file}
-	echo filename  ${filename}
 
 }
 
@@ -168,6 +164,7 @@ Arguments
   -n <host:port>  output to netcat
 EOF
 	echo "${USAGE}"
+	echo
 }
 
 
