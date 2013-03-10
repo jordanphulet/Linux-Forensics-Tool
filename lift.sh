@@ -2,84 +2,102 @@
 ##The goal of this script of to automate the gathering and exportation of data, as well as provide the ability to run the tools individually
 ##Libraries should be statically linked to the executables called and included with script
 
+#GLOBAL VARIABLES
+script="${0}"
 vers="0.0.1a"
-port="0";
-host="nope";
-netcat=false;
-file=false;
-filename="";
-cli=false;
-output="";
+port="0"
+host="nope"
+netcat=false
+file=false
+filename=""
+cli=false
 
 function main()
 {
 	##Check for root permissions.
-	if [[ $UID -ne 0 ]]; then
-	        echo "lift must be run as root"
+	if [[ ${UID} -ne 0 ]]
+	then
+	        echo "${script} must be run as root"
 	        exit 1
 	fi
 
-	USAGE="Usage: lift [vnc] [-p remoteport] [-h remotehost] [-w filename]"
-
-	if [ "$#" == "0" ]; then
-	        echo "$USAGE"
-	        exit 1
-	fi
-
-	parse_arguments "$@"
+	parse_arguments "${@}"
 
 	print_globals
 
-
-	if (($netcat) && (! $cli) && (! $file))
+	if (($cli))
 	then
 		echo 1
-		scrape | nc -q 1 $host $port
-	elif ((! $netcat) && ($cli) && (! $file))
+		scrape
+	fi
+
+	if ((${file}))
 	then
 		echo 2
-		scrape
-	elif ((! $netcat) && (! $cli) && ($file))
+		scrape >> "${filename}"
+	fi		
+
+	if ((${netcat}))
 	then
 		echo 3
-		scrape >> $filename
-	else
-		echo 4
+		scrape | nc -q 1 ${host} ${port}
 	fi
+
 }
 
 function parse_arguments()
 {
-	while getopts "vncw:h:p:" opt; do
-		case $opt in
-			##Print version info
-			v)
-				echo "Version $vers"
+	while getopts "hvcn:o:" opt
+	do
+		case ${opt} in
+			##help
+			h)
+				print_usage
 				exit 1
 			;;
-			##host for netcat
-			h)
-				host=$OPTARG
+			##Print version info
+			v)
+				echo "Version ${vers}"
+				exit 1
 			;;
-			##use netcate
+			##use netcat
 			n)
+				if ((${netcat}) || (${cli}) || (${file}))
+				then
+					echo "You have chosen multiple output options."
+					print_usage
+					exit 1
+				fi
 				netcat=true
-			;;
-			##port for netcat
-			p)
-				port=$OPTARG
+				IFS=':' read -ra PARTS <<< "${OPTARG}"
+				host=${PARTS[0]}
+				port=${PARTS[1]}
 			;;
 			##Write to file
-			w)
+			o)
+				if ((${netcat}) || (${cli}) || (${file}))
+				then
+					echo "You have chosen multiple output options."
+					print_usage
+					exit 1
+				fi
 				file=true
-				filename=$OPTARG
+				filename=${OPTARG}
 			;;
 			##output to command line
 			c)
+				if ((${netcat}) || (${file}))
+				then
+					echo "You have chosen multiple output options."
+					print_usage
+					exit 1
+				fi
 				cli=true
 			;;
 			\?)
-				echo "Invalid option: -$OPTARG" >&2
+				print_usage
+#				echo
+#				echo "Invalid option: -${OPTARG}" >&2
 				exit 1
 			;;
 		esac
@@ -88,14 +106,14 @@ function parse_arguments()
 
 function print_globals()
 {
+	echo script    ${script}
 	echo vers      ${vers}
+	echo cli       ${cli}
+	echo netcat    ${netcat}
 	echo port      ${port}
 	echo host      ${host}
-	echo netcat    ${netcat}
 	echo file      ${file}
 	echo filename  ${filename}
-	echo cli       ${cli}
-	echo output    ${output}
 
 }
 
@@ -137,10 +155,20 @@ function scrape()
 	date
 }
 
+function print_usage()
+{
+	read -d '' USAGE <<- EOF
+Usage: ${script} [ -h | -v | -c | -o <file> | -n <host:port> ]
 
-#exit 1
-##For now, just straight command line output (0), then netcat(1), then write to file(2)
-#echo $output
-#scrape
+Arguments
+  -h              help
+  -v              version
+  -c              output to standard out (default)
+  -o <file>       output to file
+  -n <host:port>  output to netcat
+EOF
+	echo "${USAGE}"
+}
 
-main "$@"
+
+main "${@}"
