@@ -1,9 +1,12 @@
 #!/bin/bash
 ##The goal of this script of to automate the gathering and exportation of data, as well as provide the ability to run the tools individually
-##TEST
 ##Libraries should be statically linked to the executables called and included with script
 
 ##functions
+function test {
+	echo "sucker"
+	}
+
 function scrape {
         ##get start date and time
         date
@@ -12,7 +15,7 @@ function scrape {
         ##Running Processes
         ps -aux
         ##Open ports and files
-        lsof -p
+        lsof
         ##Routing and ARP Tables
         netstat -rn
         route -Cn
@@ -96,18 +99,11 @@ while getopts "vncw:h:p:" opt; do
         ;;
   esac
 done
-echo "$port $host"
-
-#if ! $netcat
-#        then
-#        output=" | nc -q 1 $port $host"
-#fi
-
 
 if (($netcat) && (! $cli) && (! $file))
 then
 	echo 1
-	scrape | nc -q 1 $port $host
+	scrape | nc -q 1 $host $port
 elif ((! $netcat) && ($cli) && (! $file))
 then
 	echo 2
@@ -120,17 +116,7 @@ else
 	echo 4
 fi
 
-
-
-
-
 #exit 1
-
-
-
-
 ##For now, just straight command line output (0), then netcat(1), then write to file(2)
-
 #echo $output
-
 #scrape
