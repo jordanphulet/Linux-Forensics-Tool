@@ -5,11 +5,11 @@
 
 ##Check for root permissions.
 if [[ $UID -ne 0 ]]; then
-        echo "$0 must be run as root"
+        echo "lift must be run as root"
         exit 1
 fi
 
-USAGE="Usage: $0 dir1 dir2 dir3 ... dirN"
+USAGE="Usage: lift [vnc] [-p remoteport] [-h remotehost] [-w filename]"
 
 if [ "$#" == "0" ]; then
         echo "$USAGE"
