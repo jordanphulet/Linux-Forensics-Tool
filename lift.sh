@@ -21,11 +21,17 @@ function main()
 	        exit 1
 	fi
 
+	if [[ ${#} -eq 0 ]]
+	then
+		print_usage
+		exit 1
+	fi
+
 	parse_arguments "${@}"
 
 	print_globals
 
-	if ((${cli}) || [ $# -eq 0 ] )
+	if ${cli}
 	then
 		echo 1
 		scrape
@@ -159,7 +165,7 @@ Usage: ${script} [ -h | -v | -c | -o <file> | -n <host:port> ]
 Arguments
   -h              help
   -v              version
-  -c              output to standard out (default)
+  -c              output to standard out
   -o <file>       output to file
   -n <host:port>  output to netcat
 EOF
