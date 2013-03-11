@@ -8,18 +8,18 @@ information on the host it is run on and optionally output to the command line,
 write to a file, or stream over netcat to remote host.
 
 Currently, information is gathered using the following:
-date
-netstat
-ps
-lsof
-route
-arp
-ifconfig
-top
-w
-last
-uname
-lsmod
+* date
+* netstat
+* ps
+* lsof
+* route
+* arp
+* ifconfig
+* top
+* w
+* last
+* uname
+* lsmod
 
 Right now there are three output options: 
 
