@@ -23,9 +23,6 @@ Currently, information is gathered using the following:
 
 Right now there are three output options: 
 
-1. stdout
-    lift.sh -c
-2. output to file
-    lift.sh -o [filename]
-3. netcat
-    lift.sh -n [host:port]
+1. stdout `lift.sh -c`
+2. output to file `lift.sh -o [filename]`
+3. netcat `lift.sh -n [host:port]`
