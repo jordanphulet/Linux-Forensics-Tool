@@ -7,7 +7,7 @@ script="${0}"
 vers="0.0.1a"
 cli=false
 file=false
-filename=""
+filename="/dev/null"
 netcat=false
 host="nope"
 port="0"
@@ -17,7 +17,7 @@ function main()
 	##Check for root permissions.
 	if [[ ${UID} -ne 0 ]]
 	then
-	        echo "${script} must be run as root"
+	        echo "${script} must be run as root" >&2
 	        exit 1
 	fi
 
@@ -85,8 +85,7 @@ function parse_arguments()
 				port=${PARTS[1]}
 			;;
 			\?)
-				print_usage
-#				echo
+				print_usage >&2
 #				echo "Invalid option: -${OPTARG}" >&2
 				exit 1
 			;;
@@ -98,24 +97,25 @@ function kill_on_multiple_outputs()
 {
 	if ((${netcat}) || (${cli}) || (${file}))
 	then
-		echo
-		echo "You have selected multiple output options."
-		echo
-		print_usage
+		echo >&2
+		echo "You have selected multiple output options." >&2
+		print_usage >&2
 		exit 1
 	fi
 }
 
 function print_globals()
 {
-	echo script    ${script}
-	echo vers      ${vers}
-	echo cli       ${cli}
-	echo file      ${file}
-	echo filename  ${filename}
-	echo netcat    ${netcat}
-	echo port      ${port}
-	echo host      ${host}
+	cat << EOF
+script    ${script}
+vers      ${vers}
+cli       ${cli}
+file      ${file}
+filename  ${filename}
+netcat    ${netcat}
+port      ${port}
+host      ${host}
+EOF
 
 }
 
@@ -159,7 +159,9 @@ function scrape()
 
 function print_usage()
 {
-	read -d '' USAGE <<- EOF
+#	read -d '' USAGE <<- EOF
+	cat << EOF
+
 Usage: ${script} [ -h | -v | -c | -o <file> | -n <host:port> ]
 
 Arguments
@@ -168,9 +170,8 @@ Arguments
   -c              output to standard out
   -o <file>       output to file
   -n <host:port>  output to netcat
+
 EOF
-	echo "${USAGE}"
-	echo
 }
 
 

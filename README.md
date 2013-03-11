@@ -21,13 +21,10 @@ last
 uname
 lsmod
 
-Right now there are two of the three output options working. 
-You can write to a file
-  lift -w <filename>
-
-or You can stream over netcat
-  lift -n -p <remote port> -h <remote host>
-
-Eventually command line output with work. Theres a problem with the logic right now.
-  lift -c
-
+Right now there are three output options: 
+  1) stdout
+      lift.sh -c
+  2) output to file
+      lift.sh -o <filename>
+  3) netcat
+      lift.sh -n <host:port>
