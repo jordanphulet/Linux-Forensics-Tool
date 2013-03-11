@@ -22,9 +22,15 @@ uname
 lsmod
 
 Right now there are three output options: 
+
   1) stdout
+
       lift.sh -c
+
   2) output to file
-      lift.sh -o <filename>
+
+      lift.sh -o [filename]
+
   3) netcat
-      lift.sh -n <host:port>
+
+      lift.sh -n [host:port]
